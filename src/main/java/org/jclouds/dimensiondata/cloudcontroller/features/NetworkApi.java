@@ -41,6 +41,7 @@ import org.jclouds.dimensiondata.cloudcontroller.domain.Placement;
 import org.jclouds.dimensiondata.cloudcontroller.domain.PublicIpBlock;
 import org.jclouds.dimensiondata.cloudcontroller.domain.Response;
 import org.jclouds.dimensiondata.cloudcontroller.domain.Vlan;
+import org.jclouds.dimensiondata.cloudcontroller.filters.OrganisationIdFilter;
 import org.jclouds.dimensiondata.cloudcontroller.parsers.ParseFirewallRules;
 import org.jclouds.dimensiondata.cloudcontroller.parsers.ParseNatRules;
 import org.jclouds.dimensiondata.cloudcontroller.parsers.ParseNetworkDomains;
@@ -55,10 +56,9 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.Transform;
 import org.jclouds.rest.binders.BindToJsonPayload;
-
-@RequestFilters({BasicAuthentication.class})
+@RequestFilters({BasicAuthentication.class, OrganisationIdFilter.class})
 @Consumes(MediaType.APPLICATION_JSON)
-@Path("/network")
+@Path("/caas/{jclouds.api-version}/network")
 public interface NetworkApi {
 
 
@@ -67,8 +67,7 @@ public interface NetworkApi {
     @Path("/deployNetworkDomain")
     @Produces(MediaType.APPLICATION_JSON)
     @MapBinder(BindToJsonPayload.class)
-    Response deployNetworkDomain(@PayloadParam("datacenterId") String datacenterId, @PayloadParam("name") String name,
-                                 @PayloadParam("description") String description, @PayloadParam("type") String type);
+    Response deployNetworkDomain(@PayloadParam("datacenterId") String datacenterId, @PayloadParam("name") String name, @PayloadParam("description") String description, @PayloadParam("type") String type);
 
     @Named("server:getNetworkDomain")
     @GET
@@ -104,9 +103,8 @@ public interface NetworkApi {
     @Path("/deployVlan")
     @Produces(MediaType.APPLICATION_JSON)
     @MapBinder(BindToJsonPayload.class)
-    Response deployVlan(@PayloadParam("networkDomainId") String networkDomainId, @PayloadParam("name") String name,
-                        @PayloadParam("description") String description, @PayloadParam("privateIpv4BaseAddress") String privateIpv4BaseAddress,
-                        @PayloadParam("privateIpv4PrefixSize") Integer privateIpv4PrefixSize);
+    Response deployVlan(@PayloadParam("networkDomainId") String networkDomainId, @PayloadParam("name") String name, @PayloadParam("description") String description,
+          @PayloadParam("privateIpv4BaseAddress") String privateIpv4BaseAddress, @PayloadParam("privateIpv4PrefixSize") Integer privateIpv4PrefixSize);
 
     @Named("server:getVlan")
     @GET
@@ -180,7 +178,7 @@ public interface NetworkApi {
     @MapBinder(BindToJsonPayload.class)
     @Fallback(Fallbacks.VoidOnNotFoundOr404.class)
     Response createNatRule(@PayloadParam("networkDomainId") String networkDomainId, @PayloadParam("internalIp") String internalIp,
-                           @PayloadParam("externalIp") String externalIp);
+          @PayloadParam("externalIp") String externalIp);
 
     @Named("network:natRule")
     @GET
@@ -216,17 +214,17 @@ public interface NetworkApi {
     @Produces(MediaType.APPLICATION_JSON)
     @MapBinder(BindToJsonPayload.class)
     Response createFirewallRule(@PayloadParam("networkDomainId") String networkDomainId, @PayloadParam("name") String name,
-                                @PayloadParam("action") String action, @PayloadParam("ipVersion") String ipVersion,
-                                @PayloadParam("protocol") String protocol, @PayloadParam("source") FirewallRuleTarget source,
-                                @PayloadParam("destination") FirewallRuleTarget destination, @PayloadParam("enabled") Boolean enabled,
-                                @PayloadParam("placement") Placement placement);
+          @PayloadParam("action") String action, @PayloadParam("ipVersion") String ipVersion, @PayloadParam("protocol") String protocol,
+          @PayloadParam("source") FirewallRuleTarget source, @PayloadParam("destination") FirewallRuleTarget destination, @PayloadParam("enabled") Boolean enabled,
+          @PayloadParam("placement") Placement placement);
 
     @Named("network:listFirewallRules")
     @GET
         @Path("/firewallRule")
     @ResponseParser(ParseFirewallRules.class)
     @Fallback(Fallbacks.EmptyIterableWithMarkerOnNotFoundOr404.class)
-    PaginatedCollection<FirewallRule> listFirewallRules(@QueryParam("networkDomainId") String networkDomainId, PaginationOptions options);
+    PaginatedCollection<FirewallRule> listFirewallRules(@QueryParam("networkDomainId") String networkDomainId,
+          PaginationOptions options);
 
     @Named("network:listFirewallRules")
     @GET
@@ -250,7 +248,7 @@ public interface NetworkApi {
     @Produces(MediaType.APPLICATION_JSON)
     @MapBinder(BindToJsonPayload.class)
     Response createPortList(@PayloadParam("networkDomainId") String networkDomainId, @PayloadParam("name") String name,
-                            @PayloadParam("description") String description, @PayloadParam("port") List<Port> port, @PayloadParam("childPortListId") List<String> childPortListId);
+          @PayloadParam("description") String description, @PayloadParam("port") List<Port> port, @PayloadParam("childPortListId") List<String> childPortListId);
 
     @Named("network:getPortList")
     @GET
@@ -265,6 +263,5 @@ public interface NetworkApi {
     @MapBinder(BindToJsonPayload.class)
     @Fallback(NullOnNotFoundOr404.class)
     Response deletePortList(@PayloadParam("id") String portListId);
-
 
 }

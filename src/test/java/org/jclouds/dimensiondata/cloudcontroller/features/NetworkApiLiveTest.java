@@ -16,16 +16,9 @@
  */
 package org.jclouds.dimensiondata.cloudcontroller.features;
 
-import static org.jclouds.dimensiondata.cloudcontroller.compute.DimensionDataCloudControllerComputeServiceAdapter.DEFAULT_ACTION;
-import static org.jclouds.dimensiondata.cloudcontroller.compute.DimensionDataCloudControllerComputeServiceAdapter.DEFAULT_IP_VERSION;
-import static org.jclouds.dimensiondata.cloudcontroller.compute.DimensionDataCloudControllerComputeServiceAdapter.DEFAULT_PROTOCOL;
-import static org.jclouds.dimensiondata.cloudcontroller.compute.strategy.GetOrCreateNetworkDomainThenCreateNodes.DEFAULT_PRIVATE_IPV4_BASE_ADDRESS;
-import static org.jclouds.dimensiondata.cloudcontroller.compute.strategy.GetOrCreateNetworkDomainThenCreateNodes.DEFAULT_PRIVATE_IPV4_PREFIX_SIZE;
-import static org.jclouds.dimensiondata.cloudcontroller.utils.DimensionDataCloudControllerUtils.generateFirewallRuleName;
-import static org.testng.Assert.assertNotNull;
-
-import java.util.List;
-
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import org.jclouds.dimensiondata.cloudcontroller.compute.DimensionDataCloudControllerComputeServiceAdapter;
 import org.jclouds.dimensiondata.cloudcontroller.domain.FirewallRuleTarget;
 import org.jclouds.dimensiondata.cloudcontroller.domain.IpRange;
 import org.jclouds.dimensiondata.cloudcontroller.domain.Placement;
@@ -38,8 +31,12 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
+import java.util.List;
+
+import static org.jclouds.dimensiondata.cloudcontroller.compute.strategy.GetOrCreateNetworkDomainThenCreateNodes.DEFAULT_PRIVATE_IPV4_BASE_ADDRESS;
+import static org.jclouds.dimensiondata.cloudcontroller.compute.strategy.GetOrCreateNetworkDomainThenCreateNodes.DEFAULT_PRIVATE_IPV4_PREFIX_SIZE;
+import static org.jclouds.dimensiondata.cloudcontroller.utils.DimensionDataCloudControllerUtils.generateFirewallRuleName;
+import static org.testng.Assert.assertNotNull;
 
 @Test(groups = "live", testName = "NetworkApiLiveTest", singleThreaded = true)
 public class NetworkApiLiveTest extends BaseDimensionDataCloudControllerApiLiveTest {
@@ -65,12 +62,11 @@ public class NetworkApiLiveTest extends BaseDimensionDataCloudControllerApiLiveT
 
     @Test(dependsOnMethods = "testCreatePortList")
     public void testCreateFirewallRuleWithPortList() {
-        Response createFirewallRuleResponse = api().createFirewallRule(
-                networkDomainId,
+        Response createFirewallRuleResponse = api().createFirewallRule(networkDomainId,
                 generateFirewallRuleName("server-id"),
-                DEFAULT_ACTION,
-                DEFAULT_IP_VERSION,
-                DEFAULT_PROTOCOL,
+                DimensionDataCloudControllerComputeServiceAdapter.DEFAULT_ACTION,
+                DimensionDataCloudControllerComputeServiceAdapter.DEFAULT_IP_VERSION,
+                DimensionDataCloudControllerComputeServiceAdapter.DEFAULT_PROTOCOL,
                 FirewallRuleTarget.builder()
                         .ip(IpRange.create("ANY", null))
                         .build(),
@@ -132,6 +128,7 @@ public class NetworkApiLiveTest extends BaseDimensionDataCloudControllerApiLiveT
         if (networkDomainId != null) {
             api().deleteNetworkDomain(networkDomainId);
         }
+
     }
 
     private NetworkApi api() {

@@ -16,22 +16,21 @@
  */
 package org.jclouds.dimensiondata.cloudcontroller.compute.functions;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.compute.reference.ComputeServiceConstants.COMPUTE_LOGGER;
-
-import javax.annotation.Resource;
-import javax.inject.Inject;
-import javax.inject.Named;
-
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
 import org.jclouds.dimensiondata.cloudcontroller.DimensionDataCloudControllerApi;
 import org.jclouds.dimensiondata.cloudcontroller.domain.NatRule;
 import org.jclouds.dimensiondata.cloudcontroller.domain.Server;
 import org.jclouds.dimensiondata.cloudcontroller.domain.internal.ServerWithExternalIp;
 import org.jclouds.logging.Logger;
 
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
+import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.compute.reference.ComputeServiceConstants.COMPUTE_LOGGER;
 
 public class ServerToServetWithExternalIp implements Function<Server, ServerWithExternalIp> {
 
@@ -51,16 +50,16 @@ public class ServerToServetWithExternalIp implements Function<Server, ServerWith
         if (server == null) return null;
         ServerWithExternalIp.Builder builder = ServerWithExternalIp.builder().server(server);
 
-        Optional<NatRule> natRuleOptional = api.getNetworkApi().listNatRules(server.networkInfo().networkDomainId()).concat()
-                .firstMatch(new Predicate<NatRule>() {
-                    @Override
-                    public boolean apply(NatRule input) {
-                        return input.internalIp().equalsIgnoreCase(server.networkInfo().primaryNic().privateIpv4());
-                    }
-                });
-
-        if (natRuleOptional.isPresent()) {
-            builder.externalIp(natRuleOptional.get().externalIp());
+        if(server.networkInfo() != null) {
+            Optional<NatRule> natRuleOptional = api.getNetworkApi().listNatRules(server.networkInfo().networkDomainId())
+                  .concat().firstMatch(new Predicate<NatRule>() {
+                      @Override public boolean apply(NatRule input) {
+                          return input.internalIp().equalsIgnoreCase(server.networkInfo().primaryNic().privateIpv4());
+                      }
+                  });
+            if (natRuleOptional.isPresent()) {
+                builder.externalIp(natRuleOptional.get().externalIp());
+            }
         }
         return builder.build();
     }

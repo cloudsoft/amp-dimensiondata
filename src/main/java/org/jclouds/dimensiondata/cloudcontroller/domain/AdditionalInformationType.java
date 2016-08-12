@@ -17,21 +17,38 @@
 package org.jclouds.dimensiondata.cloudcontroller.domain;
 
 import com.google.auto.value.AutoValue;
-import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.json.SerializedNames;
 
 @AutoValue
-public abstract class Property {
+public abstract class AdditionalInformationType
+{
 
-    Property() {} // For AutoValue only!
+    public abstract String value();
 
     public abstract String name();
 
-    @Nullable
-    public abstract String value();
+    AdditionalInformationType() {}
 
-    @SerializedNames({ "name", "value" })
-    public static Property create(String name, String value) {
-        return new AutoValue_Property(name, value);
+    @SerializedNames({"value", "name"})
+    public static AdditionalInformationType create(String value, String name)
+    {
+        return builder().value(value).name(name).build();
+    }
+
+    public abstract AdditionalInformationType.Builder toBuilder();
+
+    @AutoValue.Builder
+    public abstract static class Builder
+    {
+        public abstract AdditionalInformationType.Builder value(String value);
+
+        public abstract AdditionalInformationType.Builder name(String name);
+
+        public abstract AdditionalInformationType build();
+    }
+
+    public static AdditionalInformationType.Builder builder()
+    {
+        return new AutoValue_AdditionalInformationType.Builder();
     }
 }

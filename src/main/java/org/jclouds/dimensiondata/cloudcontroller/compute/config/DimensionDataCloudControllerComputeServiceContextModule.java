@@ -16,6 +16,8 @@
  */
 package org.jclouds.dimensiondata.cloudcontroller.compute.config;
 
+import javax.inject.Singleton;
+
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
@@ -40,10 +42,15 @@ import org.jclouds.dimensiondata.cloudcontroller.domain.internal.ServerWithExter
 import org.jclouds.domain.Location;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
+import com.google.inject.Injector;
+import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
 public class DimensionDataCloudControllerComputeServiceContextModule extends
         ComputeServiceAdapterContextModule<ServerWithExternalIp, OsImage, OsImage, Datacenter> {
+
+    private DimensionDataCloudControllerTemplateOptions templateOptions;
 
     @Override
     protected void configure() {
@@ -68,5 +75,22 @@ public class DimensionDataCloudControllerComputeServiceContextModule extends
         install(new LocationsFromComputeServiceAdapterModule<ServerWithExternalIp, OsImage, OsImage, Datacenter>() {
         });
 
+    }
+
+    @Override
+    protected TemplateOptions provideTemplateOptions(Injector injector, TemplateOptions options) {
+        this.templateOptions = (DimensionDataCloudControllerTemplateOptions) options;
+        return super.provideTemplateOptions(injector, options);
+    }
+
+    @Provides
+    @Singleton
+    protected Supplier<DimensionDataCloudControllerTemplateOptions> getTemplateOptions() {
+        return new Supplier<DimensionDataCloudControllerTemplateOptions>() {
+            @Override
+            public DimensionDataCloudControllerTemplateOptions get() {
+                return templateOptions;
+            }
+        };
     }
 }

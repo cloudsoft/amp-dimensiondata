@@ -16,16 +16,8 @@
  */
 package org.jclouds.dimensiondata.cloudcontroller.compute;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.jclouds.compute.predicates.NodePredicates.inGroup;
-import static org.jclouds.compute.predicates.NodePredicates.runningInGroup;
-
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-import javax.inject.Named;
-
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.RunScriptOnNodesException;
 import org.jclouds.compute.domain.ExecResponse;
@@ -35,6 +27,7 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.dimensiondata.cloudcontroller.DimensionDataCloudControllerApi;
 import org.jclouds.dimensiondata.cloudcontroller.compute.options.DimensionDataCloudControllerTemplateOptions;
 import org.jclouds.logging.Logger;
 import org.jclouds.scriptbuilder.statements.login.AdminAccess;
@@ -42,8 +35,15 @@ import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
+import javax.annotation.Resource;
+import javax.inject.Named;
+import java.util.Map;
+import java.util.Set;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.jclouds.compute.predicates.NodePredicates.inGroup;
+import static org.jclouds.compute.predicates.NodePredicates.runningInGroup;
+import static org.testng.Assert.assertNotNull;
 
 @Test(groups = "live", testName = "DimensionDataCloudControllerComputeServiceContextLiveTest")
 public class DimensionDataCloudControllerComputeServiceContextLiveTest extends BaseComputeServiceContextLiveTest {
@@ -57,6 +57,7 @@ public class DimensionDataCloudControllerComputeServiceContextLiveTest extends B
     public DimensionDataCloudControllerComputeServiceContextLiveTest() {
         provider = "dimensiondata-cloudcontroller";
     }
+
 
     @Test
     public void testListHardwareProfiles() {
@@ -115,7 +116,23 @@ public class DimensionDataCloudControllerComputeServiceContextLiveTest extends B
         } finally {
             view.getComputeService().destroyNodesMatching(inGroup(name));
         }
-}
+    }
+
+    @Test
+    public void testUnwrapToDimensionDataApi(){
+        DimensionDataCloudControllerApi dimensionDataCloudControllerApi =
+              view.unwrapApi(DimensionDataCloudControllerApi.class);
+        assertNotNull(dimensionDataCloudControllerApi);
+    }
+
+    @Test
+    public void reconfigureServerCpu(){
+        DimensionDataCloudControllerApi dimensionDataCloudControllerApi =
+                      view.unwrapApi(DimensionDataCloudControllerApi.class);
+        dimensionDataCloudControllerApi.getServerApi()
+              // server ID corresponds to "GJ_Test" server in devlab1
+              .reconfigureServer("4e00b8f7-28ea-4103-b757-0aa7f3a94e1e", 1, "STANDARD", 1);
+    }
 
     @Override
     protected Iterable<Module> setupModules() {

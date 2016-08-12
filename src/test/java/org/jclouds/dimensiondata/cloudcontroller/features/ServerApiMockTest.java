@@ -16,47 +16,86 @@
  */
 package org.jclouds.dimensiondata.cloudcontroller.features;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
-
+import com.google.common.collect.Lists;
+import com.squareup.okhttp.mockwebserver.RecordedRequest;
+import org.jclouds.dimensiondata.cloudcontroller.domain.CPU;
 import org.jclouds.dimensiondata.cloudcontroller.domain.Disk;
 import org.jclouds.dimensiondata.cloudcontroller.domain.NIC;
 import org.jclouds.dimensiondata.cloudcontroller.domain.NetworkInfo;
 import org.jclouds.dimensiondata.cloudcontroller.domain.Response;
+import org.jclouds.dimensiondata.cloudcontroller.domain.options.CreateServerOptions;
 import org.jclouds.dimensiondata.cloudcontroller.internal.BaseDimensionDataCloudControllerMockTest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.Lists;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 
 /**
  * Mock tests for the {@link ServerApi} class.
  */
-@Test(groups = "unit", testName = "ServerApiMockTest")
+@Test(groups = "unit", testName = "ServerApiMockTest", singleThreaded = true)
 public class ServerApiMockTest extends BaseDimensionDataCloudControllerMockTest {
 
-    public void testDeployServerReturnsUnexpectedError() throws InterruptedException {
-        server.enqueue(responseUnexpectedError());
-        server.enqueue(response200());
+   public void testDeployServerReturnsUnexpectedError() throws InterruptedException {
+      server.enqueue(responseUnexpectedError());
+      server.enqueue(response200());
+      NetworkInfo networkInfo = NetworkInfo.create(
+            "networkDomainId",
+            NIC.builder().vlanId("vlanId").build(),
+            // TODO allow additional NICs
+            Lists.<NIC>newArrayList()
+      );
+      Response response = api.getServerApi().deployServer(ServerApiMockTest.class.getSimpleName(),
+            "imageId",
+            true,
+            networkInfo,
+            Lists.<Disk>newArrayList(),
+            "administratorPassword");
 
-        NetworkInfo networkInfo = NetworkInfo.create(
-                "networkDomainId",
-                NIC.builder().vlanId("vlanId").build(),
-                // TODO allow additional NICs
-                Lists.<NIC>newArrayList()
-        );
-        Response response = api.getServerApi().deployServer(
-                ServerApiMockTest.class.getSimpleName(),
-                "imageId",
-                true,
-                networkInfo,
-                Lists.<Disk>newArrayList(),
-                "administratorPassword");
+      assertNull(response);
 
-        assertNull(response);
+      assertEquals(server.getRequestCount(), 2);
+      assertSent(server, "POST", "/caas/2.2/" + ORG_ID + "/server/deployServer");
+   }
 
-        assertEquals(server.getRequestCount(), 2);
-        assertSent(server, "POST", "/server/deployServer");
-    }
+   public void testDeployServerWithSpecificCpu() throws InterruptedException {
+      server.enqueue(response200());
+
+      NetworkInfo networkInfo = NetworkInfo.create(
+            "networkDomainId",
+            NIC.builder().vlanId("vlanId").build(),
+            Lists.<NIC>newArrayList()
+      );
+
+      CreateServerOptions createServerOptions = CreateServerOptions.builder()
+            .cpu(CPU.builder()
+                  .count(1)
+                  .speed("HIGHPERFORMANCE")
+                  .coresPerSocket(2)
+                  .build())
+            .build();
+      api.getServerApi().deployServer(
+            ServerApiMockTest.class.getSimpleName(),
+            "imageId",
+            true,
+            networkInfo,
+            Lists.<Disk>newArrayList(),
+            "administratorPassword",
+            createServerOptions);
+      RecordedRequest recordedRequest = assertSent(server, "POST", "/caas/2.2/" + ORG_ID + "/server/deployServer");
+      assertBodyContains(
+            recordedRequest, "\"cpu\":{\"count\":1,\"speed\":\"HIGHPERFORMANCE\",\"coresPerSocket\":2}");
+   }
+
+   public void testReconfigureCpu() throws Exception {
+      server.enqueue(response200());
+
+      api.getServerApi().reconfigureServer("serverId", 2, "ECONOMY", 4);
+
+      RecordedRequest recordedRequest = assertSent(server, "POST", "/caas/2.2/" + ORG_ID + "/server/reconfigureServer");
+      assertBodyContains(recordedRequest,
+            "{\"id\":\"serverId\",\"cpuCount\":2,\"cpuSpeed\":\"ECONOMY\",\"coresPerSocket\":4}");
+   }
 
 /*
     public void testGetServerReturnsResourceNotFound() throws InterruptedException {

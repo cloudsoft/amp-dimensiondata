@@ -16,10 +16,6 @@
  */
 package org.jclouds.dimensiondata.cloudcontroller.handlers;
 
-import static org.jclouds.http.HttpUtils.closeClientButKeepContentStream;
-
-import javax.inject.Singleton;
-
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpResponse;
@@ -27,6 +23,10 @@ import org.jclouds.http.HttpResponseException;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceAlreadyExistsException;
 import org.jclouds.rest.ResourceNotFoundException;
+
+import javax.inject.Singleton;
+
+import static org.jclouds.http.HttpUtils.closeClientButKeepContentStream;
 
 /**
  * This will org.jclouds.dimensiondata.cloudcontroller.parse and set an appropriate exception on the command object.
@@ -49,7 +49,9 @@ public class DimensionDataCloudControllerErrorHandler implements HttpErrorHandle
                     exception = new ResourceNotFoundException(message, exception);
                 } else if (message.contains("INVALID_INPUT_DATA") ||
                         message.contains("ORGANIZATION_NOT_VERIFIED") ||
-                        message.contains("SYSTEM_ERROR") && !message.contains("RETRYABLE_SYSTEM_ERROR")) {
+                        message.contains("SYSTEM_ERROR") && !message.contains("RETRYABLE_SYSTEM_ERROR") ||
+                        message.contains("CPU_SPEED_NOT_AVAILABLE") ||
+                        message.contains("CONFIGURATION_NOT_SUPPORTED")) {
                     exception = new IllegalStateException(message, exception);
                 } else if (message.contains("RESOURCE_BUSY") || message.contains("UNEXPECTED_ERROR")) {
                     exception = new ResourceNotFoundException(message, exception);

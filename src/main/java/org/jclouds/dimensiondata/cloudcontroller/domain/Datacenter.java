@@ -16,6 +16,7 @@
  */
 package org.jclouds.dimensiondata.cloudcontroller.domain;
 
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.json.SerializedNames;
 
 import com.google.auto.value.AutoValue;
@@ -39,9 +40,9 @@ public abstract class Datacenter {
     public abstract String ftpsHost();
     public abstract Networking networking();
     public abstract Hypervisor hypervisor();
-    public abstract Backup backup();
-    public abstract ConsoleAccess consoleAccess();
-    public abstract Monitoring monitoring();
+    @Nullable public abstract Backup backup();
+    @Nullable public abstract ConsoleAccess consoleAccess();
+    @Nullable public abstract Monitoring monitoring();
 
     @SerializedNames({ "id", "displayName", "type", "city", "state", "country", "vpnUrl", "ftpsHost", "networking", "hypervisor", "backup", "consoleAccess", "monitoring" })
     public static Datacenter create(String id, String displayName, String type, String city, String state, String country, String vpnUrl, String ftpsHost, Networking networking, Hypervisor hypervisor, Backup backup, ConsoleAccess consoleAccess, Monitoring monitoring) {

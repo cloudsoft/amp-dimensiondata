@@ -56,19 +56,15 @@ public class DimensionDataCloudControllerApiMetadata extends BaseHttpApiMetadata
    public static class Builder extends BaseHttpApiMetadata.Builder<DimensionDataCloudControllerApi, Builder> {
 
       protected Builder() {
-         id("dimensiondata-cloudcontroller")
-                 .name("DimensionData CloudController API")
-                 .identityName("user name")
-                 .credentialName("user password")
-                 .documentation(URI.create("http://www.dimensiondata.com/en-US/Solutions/Cloud"))
-                 .defaultEndpoint("https://api-REGION.dimensiondata.com/caas/2.1/ORG-ID")
-                 .defaultProperties(DimensionDataCloudControllerApiMetadata.defaultProperties())
-                 .view(typeToken(ComputeServiceContext.class))
-                 .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
-                         .add(DimensionDataCloudControllerHttpApiModule.class)
-                         .add(DimensionDataCloudControllerParserModule.class)
-                         .add(DimensionDataCloudControllerComputeServiceContextModule.class)
-                         .build());
+         id("dimensiondata-cloudcontroller").name("DimensionData CloudController API").identityName("user name")
+               .credentialName("user password")
+               .documentation(URI.create("http://www.dimensiondata.com/en-US/Solutions/Cloud"))
+               .defaultEndpoint("https://api-REGION.dimensiondata.com/").version("2.2")
+               .defaultProperties(DimensionDataCloudControllerApiMetadata.defaultProperties())
+               .view(typeToken(ComputeServiceContext.class)).defaultModules(
+               ImmutableSet.<Class<? extends Module>>builder().add(DimensionDataCloudControllerHttpApiModule.class)
+                     .add(DimensionDataCloudControllerParserModule.class)
+                     .add(DimensionDataCloudControllerComputeServiceContextModule.class).build());
       }
 
       @Override

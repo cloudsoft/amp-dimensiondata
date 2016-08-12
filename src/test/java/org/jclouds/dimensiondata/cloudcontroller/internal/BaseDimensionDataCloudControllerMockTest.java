@@ -16,20 +16,11 @@
  */
 package org.jclouds.dimensiondata.cloudcontroller.internal;
 
-import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.io.IOException;
-import java.util.Properties;
-import java.util.Set;
-
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-
 import org.jclouds.ContextBuilder;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.dimensiondata.cloudcontroller.DimensionDataCloudControllerApi;
 import org.jclouds.dimensiondata.cloudcontroller.DimensionDataCloudControllerProviderMetadata;
+import org.jclouds.dimensiondata.cloudcontroller.compute.DimensionDataCloudControllerComputeServiceAdapter;
 import org.jclouds.json.Json;
 import org.jclouds.rest.ApiContext;
 import org.testng.annotations.AfterMethod;
@@ -44,6 +35,14 @@ import com.google.inject.Module;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 import com.squareup.okhttp.mockwebserver.RecordedRequest;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+import java.io.IOException;
+import java.util.Properties;
+import java.util.Set;
+
+import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Base class for all DimensionDataCloudController mock tests.
@@ -51,6 +50,8 @@ import com.squareup.okhttp.mockwebserver.RecordedRequest;
 public class BaseDimensionDataCloudControllerMockTest {
 
    private static final String DEFAULT_ENDPOINT = new DimensionDataCloudControllerProviderMetadata().getEndpoint();
+
+   protected static final String ORG_ID = "mockOrgId";
 
    /*extends BaseMockWebServerTest {
 
@@ -94,6 +95,7 @@ private final Set<Module> modules = ImmutableSet.<Module> of(new ExecutorService
    public void start() throws IOException {
       server = new MockWebServer();
       server.play();
+      DimensionDataCloudControllerComputeServiceAdapter.ORG_ID = ORG_ID;
       ApiContext<DimensionDataCloudControllerApi> ctx = ContextBuilder.newBuilder("dimensiondata-cloudcontroller")
               .credentials("", "")
               .endpoint(url(""))
@@ -120,6 +122,10 @@ private final Set<Module> modules = ImmutableSet.<Module> of(new ExecutorService
 
    protected MockResponse jsonResponse(String resource) {
       return new MockResponse().addHeader("Content-Type", "application/json").setBody(stringFromResource(resource));
+   }
+
+   protected MockResponse xmlResponse(String resource) {
+      return new MockResponse().addHeader("Content-Type", "application/xml").setBody(stringFromResource(resource));
    }
 
    protected MockResponse responseUnexpectedError() {
@@ -150,5 +156,9 @@ private final Set<Module> modules = ImmutableSet.<Module> of(new ExecutorService
       assertThat(request.getPath()).isEqualTo(path);
       assertThat(request.getHeader(HttpHeaders.ACCEPT)).isEqualTo(MediaType.APPLICATION_JSON);
       return request;
+   }
+
+   protected void assertBodyContains(RecordedRequest recordedRequest, String expectedText){
+      assertThat(recordedRequest.getUtf8Body()).contains(expectedText);
    }
 }

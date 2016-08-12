@@ -16,20 +16,19 @@
  */
 package org.jclouds.dimensiondata.cloudcontroller.handlers;
 
-import static org.jclouds.Constants.PROPERTY_MAX_RETRIES;
-import static org.jclouds.http.HttpUtils.closeClientButKeepContentStream;
-
-import javax.annotation.Resource;
-import javax.inject.Named;
-import javax.inject.Singleton;
-
+import com.google.common.annotations.Beta;
+import com.google.inject.Inject;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.logging.Logger;
 
-import com.google.common.annotations.Beta;
-import com.google.inject.Inject;
+import javax.annotation.Resource;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
+import static org.jclouds.Constants.PROPERTY_MAX_RETRIES;
+import static org.jclouds.http.HttpUtils.closeClientButKeepContentStream;
 
 /**
  * Retry handler that takes into account the DimensionData retriers and delays
@@ -61,7 +60,11 @@ public class DimensionDataCloudControllerRetryHandler extends BackoffLimitedRetr
          return false;
       } else if (command.getFailureCount() > retryCountLimit) {
          logger.error("Cannot retry after server error, command has exceeded retry limit %1$d: %2$s", retryCountLimit,
-                 command);
+               command);
+         return false;
+      } else if (response.getStatusCode() == 400 && (
+            message.contains("CPU_SPEED_NOT_AVAILABLE") ||
+            message.contains("CONFIGURATION_NOT_SUPPORTED"))) {
          return false;
       } else {
          imposeBackoffExponentialDelay(command.getFailureCount(), "server error: " + command.toString());

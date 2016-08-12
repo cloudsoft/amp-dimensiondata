@@ -70,6 +70,7 @@ public abstract class Server {
     public abstract List<Disk> disks();
     @Nullable public abstract NetworkInfo networkInfo();
     public abstract List<Object> softwareLabels();
+    @Nullable
     public abstract VMwareTools vmwareTools();
     @Nullable public abstract Progress progress();
     @Nullable public abstract VirtualHardware virtualHardware();

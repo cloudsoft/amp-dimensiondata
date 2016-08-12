@@ -101,8 +101,10 @@ public class OsImageToImage implements Function<OsImage, Image> {
             version = get(Splitter.on(" ").split(documentation), 2);
         } else if (documentation.toLowerCase().startsWith(OsFamily.SUSE.value().toLowerCase())) {
             version = get(Splitter.on(" ").split(documentation), 4);
-        } else {
+        } else if (documentation.split(" ").length > 1) {
             version = get(Splitter.on(" ").split(documentation), 1);
+        } else {
+            version = "unknown";
         }
         return version;
     }

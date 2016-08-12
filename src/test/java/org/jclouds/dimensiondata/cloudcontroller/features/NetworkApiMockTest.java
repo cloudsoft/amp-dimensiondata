@@ -38,7 +38,7 @@ public class NetworkApiMockTest extends BaseDimensionDataCloudControllerMockTest
         assertEquals(size(networkDomains), 1); // Force the PagedIterable to advance
         assertEquals(server.getRequestCount(), 1);
 
-        assertSent(server, "GET", "/network/networkDomain");
+        assertSent(server, "GET", "/caas/2.2/" + ORG_ID + "/network/networkDomain");
     }
 /*
     public void testListVlans() throws Exception {

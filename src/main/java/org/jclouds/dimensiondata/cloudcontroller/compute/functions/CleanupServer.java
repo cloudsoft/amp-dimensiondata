@@ -90,7 +90,8 @@ public class CleanupServer implements Function<String, Boolean> {
       }
 
       // delete firewall rules
-      List<FirewallRule> firewallRulesToBeDeleted = api.getNetworkApi().listFirewallRules(networkDomainId).concat().filter(new Predicate<FirewallRule>() {
+      List<FirewallRule> firewallRulesToBeDeleted = api.getNetworkApi().listFirewallRules(
+            networkDomainId).concat().filter(new Predicate<FirewallRule>() {
          @Override
          public boolean apply(FirewallRule firewallRule) {
             return firewallRule.name().equals(generateFirewallRuleName(serverId));

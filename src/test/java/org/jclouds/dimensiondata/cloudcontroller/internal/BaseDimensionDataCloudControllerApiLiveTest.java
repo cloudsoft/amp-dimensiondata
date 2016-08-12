@@ -29,6 +29,7 @@ import com.google.inject.Module;
 @Test(groups = "live")
 public class BaseDimensionDataCloudControllerApiLiveTest extends BaseApiLiveTest<DimensionDataCloudControllerApi> {
 
+    protected String ORG_ID = System.getProperty("test.dimensiondata-cloudcontroller.orgId", "250c2c09-ffed-4b44-8b80-3000b6088074");
 
     public BaseDimensionDataCloudControllerApiLiveTest() {
         provider = "dimensiondata-cloudcontroller";

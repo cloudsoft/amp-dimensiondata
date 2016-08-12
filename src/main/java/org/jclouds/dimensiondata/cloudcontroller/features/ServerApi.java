@@ -16,25 +16,17 @@
  */
 package org.jclouds.dimensiondata.cloudcontroller.features;
 
-import java.util.List;
-
-import javax.inject.Named;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-
 import org.jclouds.Fallbacks;
 import org.jclouds.collect.PagedIterable;
 import org.jclouds.dimensiondata.cloudcontroller.domain.Disk;
+import org.jclouds.dimensiondata.cloudcontroller.domain.NetworkInfo;
 import org.jclouds.dimensiondata.cloudcontroller.domain.PaginatedCollection;
 import org.jclouds.dimensiondata.cloudcontroller.domain.Response;
 import org.jclouds.dimensiondata.cloudcontroller.domain.Server;
 import org.jclouds.dimensiondata.cloudcontroller.domain.options.CreateServerOptions;
-import org.jclouds.dimensiondata.cloudcontroller.domain.NetworkInfo;
+import org.jclouds.dimensiondata.cloudcontroller.filters.DatacenterIdFilter;
+import org.jclouds.dimensiondata.cloudcontroller.filters.NetworkDomainIdFilter;
+import org.jclouds.dimensiondata.cloudcontroller.filters.OrganisationIdFilter;
 import org.jclouds.dimensiondata.cloudcontroller.options.PaginationOptions;
 import org.jclouds.dimensiondata.cloudcontroller.parsers.ParseServers;
 import org.jclouds.http.filters.BasicAuthentication;
@@ -46,9 +38,19 @@ import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.Transform;
 import org.jclouds.rest.binders.BindToJsonPayload;
 
-@RequestFilters({BasicAuthentication.class})
+import javax.inject.Named;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import java.util.List;
+
+@RequestFilters({BasicAuthentication.class, OrganisationIdFilter.class})
 @Consumes(MediaType.APPLICATION_JSON)
-@Path("/server")
+@Path("/caas/{jclouds.api-version}/server")
 public interface ServerApi {
 
     @Named("server:list")
@@ -64,6 +66,7 @@ public interface ServerApi {
     @Transform(ParseServers.ToPagedIterable.class)
     @ResponseParser(ParseServers.class)
     @Fallback(Fallbacks.EmptyPagedIterableOnNotFoundOr404.class)
+    @RequestFilters({DatacenterIdFilter.class, NetworkDomainIdFilter.class})
     PagedIterable<Server> listServers();
 
     @Named("server:get")
@@ -77,18 +80,17 @@ public interface ServerApi {
     @Path("/deployServer")
     @Produces(MediaType.APPLICATION_JSON)
     @MapBinder(BindToJsonPayload.class)
-    Response deployServer(@PayloadParam("name") String name, @PayloadParam("imageId") String imageId,
-                          @PayloadParam("start") Boolean start, @PayloadParam("networkInfo") NetworkInfo networkInfo, @PayloadParam("disk") List<Disk> disks,
-                          @PayloadParam("administratorPassword") String administratorPassword);
+    Response deployServer(@PayloadParam("name") String name, @PayloadParam("imageId") String imageId, @PayloadParam("start") Boolean start,
+          @PayloadParam("networkInfo") NetworkInfo networkInfo, @PayloadParam("disk") List<Disk> disks, @PayloadParam("administratorPassword") String administratorPassword);
 
     @Named("server:deploy")
     @POST
     @Path("/deployServer")
     @Produces(MediaType.APPLICATION_JSON)
     @MapBinder(CreateServerOptions.class)
-    Response deployServer(@PayloadParam("name") String name, @PayloadParam("imageId") String imageId,
-                          @PayloadParam("start") Boolean start, @PayloadParam("networkInfo") NetworkInfo networkInfo, @PayloadParam("disk") List<Disk> disks,
-                          @PayloadParam("administratorPassword") String administratorPassword, CreateServerOptions options);
+    Response deployServer(@PayloadParam("name") String name, @PayloadParam("imageId") String imageId, @PayloadParam("start") Boolean start,
+          @PayloadParam("networkInfo") NetworkInfo networkInfo, @PayloadParam("disk") List<Disk> disks, @PayloadParam("administratorPassword") String administratorPassword,
+          CreateServerOptions options);
 
     @Named("server:delete")
     @POST
@@ -111,4 +113,14 @@ public interface ServerApi {
     @Produces(MediaType.APPLICATION_JSON)
     @MapBinder(BindToJsonPayload.class)
     Response rebootServerServer(@PayloadParam("id") String id);
+
+    @Named("server:reconfigureServer")
+    @POST
+    @Path("/reconfigureServer")
+    @Produces(MediaType.APPLICATION_JSON)
+    @MapBinder(BindToJsonPayload.class)
+    Response reconfigureServer(@PayloadParam("id") String id,
+          @PayloadParam("cpuCount") int cpuCount, @PayloadParam("cpuSpeed") String cpuSpeed,
+          @PayloadParam("coresPerSocket") int coresPerSocket);
+
 }

@@ -50,12 +50,12 @@ public class DimensionDataCloudControllerComputeServiceLiveTest extends BaseComp
 
    @Override
    protected void checkTagsInNodeEquals(NodeMetadata node, ImmutableSet<String> tags) {
-      // DimensionData does not support tags
+      // TODO implement (DimensionData does support tags)
    }
 
    @Override
    protected void checkUserMetadataContains(NodeMetadata node, ImmutableMap<String, String> userMetadata) {
-      // DimensionData does not support user metadata
+      // TODO implement using tags
    }
 
    @Override
