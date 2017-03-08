@@ -28,6 +28,7 @@ import org.jclouds.collect.PagedIterable;
 import org.jclouds.dimensiondata.cloudcontroller.domain.Datacenter;
 import org.jclouds.dimensiondata.cloudcontroller.domain.OperatingSystem;
 import org.jclouds.dimensiondata.cloudcontroller.domain.PaginatedCollection;
+import org.jclouds.dimensiondata.cloudcontroller.filters.OrganisationIdFilter;
 import org.jclouds.dimensiondata.cloudcontroller.parsers.ParseDatacenters;
 import org.jclouds.dimensiondata.cloudcontroller.parsers.ParseOperatingSystems;
 import org.jclouds.dimensiondata.cloudcontroller.options.PaginationOptions;
@@ -37,9 +38,9 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.Transform;
 
-@RequestFilters({BasicAuthentication.class})
+@RequestFilters({BasicAuthentication.class, OrganisationIdFilter.class})
 @Consumes(MediaType.APPLICATION_JSON)
-@Path("/infrastructure")
+@Path("/caas/{jclouds.api-version}/infrastructure")
 public interface InfrastructureApi {
 
     @Named("infrastructure:datacenter")
@@ -62,7 +63,8 @@ public interface InfrastructureApi {
     @Path("/operatingSystem")
     @ResponseParser(ParseOperatingSystems.class)
     @Fallback(Fallbacks.EmptyIterableWithMarkerOnNotFoundOr404.class)
-    PaginatedCollection<OperatingSystem> listOperatingSystems(@QueryParam("datacenterId") String datacenterId, PaginationOptions options);
+    PaginatedCollection<OperatingSystem> listOperatingSystems(@QueryParam("datacenterId") String datacenterId,
+          PaginationOptions options);
 
     @Named("infrastructure:operatingSystem")
     @GET

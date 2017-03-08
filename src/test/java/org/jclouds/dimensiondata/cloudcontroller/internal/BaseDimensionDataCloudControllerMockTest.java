@@ -102,6 +102,7 @@ private final Set<Module> modules = ImmutableSet.<Module> of(new ExecutorService
               .build();
       json = ctx.utils().injector().getInstance(Json.class);
       api = ctx.getApi();
+      server.enqueue(xmlResponse("/account.xml"));
    }
 
    @AfterMethod(alwaysRun = true)
@@ -120,6 +121,10 @@ private final Set<Module> modules = ImmutableSet.<Module> of(new ExecutorService
 
    protected MockResponse jsonResponse(String resource) {
       return new MockResponse().addHeader("Content-Type", "application/json").setBody(stringFromResource(resource));
+   }
+
+   protected MockResponse xmlResponse(String resource) {
+      return new MockResponse().addHeader("Content-Type", "application/xml").setBody(stringFromResource(resource));
    }
 
    protected MockResponse responseUnexpectedError() {
@@ -151,4 +156,5 @@ private final Set<Module> modules = ImmutableSet.<Module> of(new ExecutorService
       assertThat(request.getHeader(HttpHeaders.ACCEPT)).isEqualTo(MediaType.APPLICATION_JSON);
       return request;
    }
+
 }

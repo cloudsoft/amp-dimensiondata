@@ -44,8 +44,7 @@ public class ServerApiMockTest extends BaseDimensionDataCloudControllerMockTest 
                 // TODO allow additional NICs
                 Lists.<NIC>newArrayList()
         );
-        Response response = api.getServerApi().deployServer(
-                ServerApiMockTest.class.getSimpleName(),
+        Response response = api.getServerApi().deployServer(ServerApiMockTest.class.getSimpleName(),
                 "imageId",
                 true,
                 networkInfo,
@@ -54,8 +53,9 @@ public class ServerApiMockTest extends BaseDimensionDataCloudControllerMockTest 
 
         assertNull(response);
 
-        assertEquals(server.getRequestCount(), 2);
-        assertSent(server, "POST", "/server/deployServer");
+        server.takeRequest();
+        assertEquals(server.getRequestCount(), 3);
+        assertSent(server, "POST", "/caas/2.2/6ac1e746-b1ea-4da5-a24e-caf1a978789d/server/deployServer");
     }
 
 /*

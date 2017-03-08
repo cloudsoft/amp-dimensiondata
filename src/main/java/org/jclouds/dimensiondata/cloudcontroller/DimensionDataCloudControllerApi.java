@@ -16,9 +16,11 @@
  */
 package org.jclouds.dimensiondata.cloudcontroller;
 
+import org.jclouds.dimensiondata.cloudcontroller.features.AccountApi;
 import org.jclouds.dimensiondata.cloudcontroller.features.InfrastructureApi;
 import org.jclouds.dimensiondata.cloudcontroller.features.NetworkApi;
 import org.jclouds.dimensiondata.cloudcontroller.features.ServerApi;
+import org.jclouds.dimensiondata.cloudcontroller.features.ServerCloneApi;
 import org.jclouds.dimensiondata.cloudcontroller.features.ServerImageApi;
 import org.jclouds.rest.annotations.Delegate;
 
@@ -37,4 +39,10 @@ public interface DimensionDataCloudControllerApi extends Closeable {
 
    @Delegate
    ServerImageApi getServerImageApi();
+
+   @Delegate
+   AccountApi getAccountApi();
+
+   @Delegate
+   ServerCloneApi getServerCloneApi();
 }

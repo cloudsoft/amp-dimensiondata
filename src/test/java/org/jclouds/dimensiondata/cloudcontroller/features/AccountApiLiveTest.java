@@ -14,21 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jclouds.dimensiondata.cloudcontroller.config;
+package org.jclouds.dimensiondata.cloudcontroller.features;
 
-import com.google.inject.name.Names;
-import org.jclouds.Constants;
-import org.jclouds.json.config.GsonModule;
+import org.jclouds.dimensiondata.cloudcontroller.domain.Account;
+import org.jclouds.dimensiondata.cloudcontroller.internal.BaseDimensionDataCloudControllerApiLiveTest;
+import org.testng.annotations.Test;
 
-import com.google.inject.AbstractModule;
+import static org.testng.Assert.assertNotNull;
 
-import java.util.Collections;
-
-public class DimensionDataCloudControllerParserModule extends AbstractModule {
-
-    @Override protected void configure() {
-        Names.bindProperties(binder(), Collections.singletonMap(Constants.PROPERTY_PRETTY_PRINT_PAYLOADS, "true"));
-        bind(GsonModule.DateAdapter.class).to(GsonModule.Iso8601DateAdapter.class);
+@Test(groups = "live", testName = "AccountApiLiveTest", singleThreaded = true)
+public class AccountApiLiveTest extends BaseDimensionDataCloudControllerApiLiveTest
+{
+    @Test
+    public void testGetAccount()
+    {
+        Account account = api().getMyAccount();
+        assertNotNull(account);
     }
 
+    private AccountApi api()
+    {
+        return api.getAccountApi();
+    }
 }

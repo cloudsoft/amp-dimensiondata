@@ -16,12 +16,12 @@
  */
 package org.jclouds.dimensiondata.cloudcontroller.features;
 
-import static com.google.common.collect.Iterables.size;
-import static org.testng.Assert.assertEquals;
-
 import org.jclouds.dimensiondata.cloudcontroller.domain.Datacenter;
 import org.jclouds.dimensiondata.cloudcontroller.internal.BaseDimensionDataCloudControllerMockTest;
 import org.testng.annotations.Test;
+
+import static com.google.common.collect.Iterables.size;
+import static org.testng.Assert.assertEquals;
 
 /**
  * Mock tests for the {@link InfrastructureApi} class.
@@ -29,15 +29,15 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", testName = "InfrastructureApiMockTest")
 public class InfrastructureApiMockTest extends BaseDimensionDataCloudControllerMockTest {
 
+   public void testListDatacenters() throws Exception {
+      server.enqueue(jsonResponse("/datacenters.json"));
+      Iterable<Datacenter> datacenters = api.getInfrastructureApi().listDatacenters().concat();
+      server.takeRequest();
 
-    public void testListDatacenters() throws Exception {
-        server.enqueue(jsonResponse("/datacenters.json"));
-        Iterable<Datacenter> datacenters = api.getInfrastructureApi().listDatacenters().concat();
+      assertEquals(size(datacenters), 2); // Force the PagedIterable to advance
+      assertEquals(server.getRequestCount(), 2);
 
-        assertEquals(size(datacenters), 2); // Force the PagedIterable to advance
-        assertEquals(server.getRequestCount(), 1);
-
-        assertSent(server, "GET", "/infrastructure/datacenter");
-    }
+      assertSent(server, "GET", "/caas/2.2/6ac1e746-b1ea-4da5-a24e-caf1a978789d/infrastructure/datacenter");
+   }
 
 }

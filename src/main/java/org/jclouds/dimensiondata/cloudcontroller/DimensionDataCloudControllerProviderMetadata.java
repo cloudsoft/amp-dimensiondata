@@ -60,7 +60,7 @@ public class DimensionDataCloudControllerProviderMetadata extends BaseProviderMe
             .apiMetadata(new DimensionDataCloudControllerApiMetadata())
             .homepage(URI.create("https://na-cloud.dimensiondata.com/"))
             .console(URI.create("https://na-cloud.dimensiondata.com/"))
-            .endpoint("https://api-na.dimensiondata.com/caas/2.2/")
+            .endpoint("https://api-na.dimensiondata.com/")
             .defaultProperties(DimensionDataCloudControllerProviderMetadata.defaultProperties());
       }
 

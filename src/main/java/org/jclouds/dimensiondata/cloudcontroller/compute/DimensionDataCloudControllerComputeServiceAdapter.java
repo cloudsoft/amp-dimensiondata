@@ -41,6 +41,7 @@ import org.jclouds.dimensiondata.cloudcontroller.DimensionDataCloudControllerApi
 import org.jclouds.dimensiondata.cloudcontroller.compute.functions.CleanupServer;
 import org.jclouds.dimensiondata.cloudcontroller.compute.functions.ServerToServetWithExternalIp;
 import org.jclouds.dimensiondata.cloudcontroller.compute.options.DimensionDataCloudControllerTemplateOptions;
+import org.jclouds.dimensiondata.cloudcontroller.domain.Account;
 import org.jclouds.dimensiondata.cloudcontroller.domain.Datacenter;
 import org.jclouds.dimensiondata.cloudcontroller.domain.Disk;
 import org.jclouds.dimensiondata.cloudcontroller.domain.FirewallRuleTarget;
@@ -65,7 +66,6 @@ import com.google.common.collect.Lists;
 /**
  * defines the connection between the {@link org.jclouds.dimensiondata.cloudcontroller.DimensionDataCloudControllerApi} implementation and
  * the jclouds {@link org.jclouds.compute.ComputeService}
- *
  */
 @Singleton
 public class DimensionDataCloudControllerComputeServiceAdapter implements
@@ -140,7 +140,8 @@ public class DimensionDataCloudControllerComputeServiceAdapter implements
         String message = format("Server(%s) is not ready within %d ms.", serverId, timeouts.nodeRunning);
         DimensionDataCloudControllerUtils.waitForServerStatus(api.getServerApi(), serverId, true, true, timeouts.nodeRunning, message);
 
-        ServerWithExternalIp.Builder serverWithExternalIpBuilder = ServerWithExternalIp.builder().server(api.getServerApi().getServer(serverId));
+        ServerWithExternalIp.Builder serverWithExternalIpBuilder = ServerWithExternalIp.builder().server(api.getServerApi().getServer(
+              serverId));
 
         if (templateOptions.autoCreateNatRule()) {
             // addPublicIPv4AddressBlock
@@ -169,8 +170,7 @@ public class DimensionDataCloudControllerComputeServiceAdapter implements
                             ImmutableList.<String>of());
             final String portListId = DimensionDataCloudControllerUtils.tryFindPropertyValue(createPorlListResponse, "portListId");
 
-            Response createFirewallRuleResponse = api.getNetworkApi().createFirewallRule(
-                    templateOptions.getNetworkDomainId(),
+            Response createFirewallRuleResponse = api.getNetworkApi().createFirewallRule(templateOptions.getNetworkDomainId(),
                     generateFirewallRuleName(serverId),
                     DEFAULT_ACTION,
                     DEFAULT_IP_VERSION,
@@ -243,6 +243,14 @@ public class DimensionDataCloudControllerComputeServiceAdapter implements
     @Override
     public Iterable<ServerWithExternalIp> listNodes() {
         return api.getServerApi().listServers().concat().transform(new ServerToServetWithExternalIp(api)).toList();
+    }
+
+    public Account getAccount(){
+        return api.getAccountApi().getMyAccount();
+    }
+
+    public void cloneServer(String id, String newImageName, String newImageDescription){
+        api.getServerCloneApi().clone(id, newImageName, newImageDescription);
     }
 
     @Override

@@ -31,14 +31,12 @@ public class NetworkApiMockTest extends BaseDimensionDataCloudControllerMockTest
 
     public void testListNetworkDomains() throws Exception {
         server.enqueue(jsonResponse("/networkDomains.json"));
-        //MockWebServer server = mockWebServer(new MockResponse().setBody(payloadFromResource("/networkDomains.json")));
-        //NetworkApi api = api(server);
         Iterable<NetworkDomain> networkDomains = api.getNetworkApi().listNetworkDomains().concat();
-
+        server.takeRequest();
         assertEquals(size(networkDomains), 1); // Force the PagedIterable to advance
-        assertEquals(server.getRequestCount(), 1);
+        assertEquals(server.getRequestCount(), 2);
 
-        assertSent(server, "GET", "/network/networkDomain");
+        assertSent(server, "GET", "/caas/2.2/6ac1e746-b1ea-4da5-a24e-caf1a978789d/network/networkDomain");
     }
 /*
     public void testListVlans() throws Exception {

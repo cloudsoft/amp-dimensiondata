@@ -14,21 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jclouds.dimensiondata.cloudcontroller.config;
+package org.jclouds.dimensiondata.cloudcontroller.domain;
 
-import com.google.inject.name.Names;
-import org.jclouds.Constants;
-import org.jclouds.json.config.GsonModule;
+import com.google.auto.value.AutoValue;
 
-import com.google.inject.AbstractModule;
-
-import java.util.Collections;
-
-public class DimensionDataCloudControllerParserModule extends AbstractModule {
-
-    @Override protected void configure() {
-        Names.bindProperties(binder(), Collections.singletonMap(Constants.PROPERTY_PRETTY_PRINT_PAYLOADS, "true"));
-        bind(GsonModule.DateAdapter.class).to(GsonModule.Iso8601DateAdapter.class);
-    }
-
+@AutoValue
+public abstract class ResultType
+{
+    ResultType() {}
 }

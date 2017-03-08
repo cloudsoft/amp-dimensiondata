@@ -35,6 +35,7 @@ import org.jclouds.dimensiondata.cloudcontroller.domain.Response;
 import org.jclouds.dimensiondata.cloudcontroller.domain.Server;
 import org.jclouds.dimensiondata.cloudcontroller.domain.options.CreateServerOptions;
 import org.jclouds.dimensiondata.cloudcontroller.domain.NetworkInfo;
+import org.jclouds.dimensiondata.cloudcontroller.filters.OrganisationIdFilter;
 import org.jclouds.dimensiondata.cloudcontroller.options.PaginationOptions;
 import org.jclouds.dimensiondata.cloudcontroller.parsers.ParseServers;
 import org.jclouds.http.filters.BasicAuthentication;
@@ -46,9 +47,9 @@ import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.Transform;
 import org.jclouds.rest.binders.BindToJsonPayload;
 
-@RequestFilters({BasicAuthentication.class})
+@RequestFilters({BasicAuthentication.class, OrganisationIdFilter.class})
 @Consumes(MediaType.APPLICATION_JSON)
-@Path("/server")
+@Path("/caas/{jclouds.api-version}/server")
 public interface ServerApi {
 
     @Named("server:list")
@@ -77,18 +78,17 @@ public interface ServerApi {
     @Path("/deployServer")
     @Produces(MediaType.APPLICATION_JSON)
     @MapBinder(BindToJsonPayload.class)
-    Response deployServer(@PayloadParam("name") String name, @PayloadParam("imageId") String imageId,
-                          @PayloadParam("start") Boolean start, @PayloadParam("networkInfo") NetworkInfo networkInfo, @PayloadParam("disk") List<Disk> disks,
-                          @PayloadParam("administratorPassword") String administratorPassword);
+    Response deployServer(@PayloadParam("name") String name, @PayloadParam("imageId") String imageId, @PayloadParam("start") Boolean start,
+          @PayloadParam("networkInfo") NetworkInfo networkInfo, @PayloadParam("disk") List<Disk> disks, @PayloadParam("administratorPassword") String administratorPassword);
 
     @Named("server:deploy")
     @POST
     @Path("/deployServer")
     @Produces(MediaType.APPLICATION_JSON)
     @MapBinder(CreateServerOptions.class)
-    Response deployServer(@PayloadParam("name") String name, @PayloadParam("imageId") String imageId,
-                          @PayloadParam("start") Boolean start, @PayloadParam("networkInfo") NetworkInfo networkInfo, @PayloadParam("disk") List<Disk> disks,
-                          @PayloadParam("administratorPassword") String administratorPassword, CreateServerOptions options);
+    Response deployServer(@PayloadParam("name") String name, @PayloadParam("imageId") String imageId, @PayloadParam("start") Boolean start,
+          @PayloadParam("networkInfo") NetworkInfo networkInfo, @PayloadParam("disk") List<Disk> disks, @PayloadParam("administratorPassword") String administratorPassword,
+          CreateServerOptions options);
 
     @Named("server:delete")
     @POST
@@ -111,4 +111,5 @@ public interface ServerApi {
     @Produces(MediaType.APPLICATION_JSON)
     @MapBinder(BindToJsonPayload.class)
     Response rebootServerServer(@PayloadParam("id") String id);
+
 }

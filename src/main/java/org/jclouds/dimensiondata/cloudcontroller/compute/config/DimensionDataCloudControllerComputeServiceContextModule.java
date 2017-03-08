@@ -16,6 +16,15 @@
  */
 package org.jclouds.dimensiondata.cloudcontroller.compute.config;
 
+import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
+
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+
+import javax.inject.Named;
+import javax.inject.Singleton;
+
+import org.jclouds.collect.Memoized;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
@@ -25,21 +34,27 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.strategy.CreateNodesInGroupThenAddToSet;
 import org.jclouds.compute.strategy.PrioritizeCredentialsFromTemplate;
+import org.jclouds.dimensiondata.cloudcontroller.DimensionDataCloudControllerApi;
 import org.jclouds.dimensiondata.cloudcontroller.compute.DimensionDataCloudControllerComputeService;
+import org.jclouds.dimensiondata.cloudcontroller.compute.DimensionDataCloudControllerComputeServiceAdapter;
 import org.jclouds.dimensiondata.cloudcontroller.compute.functions.DatacenterToLocation;
 import org.jclouds.dimensiondata.cloudcontroller.compute.functions.OsImageToHardware;
 import org.jclouds.dimensiondata.cloudcontroller.compute.functions.OsImageToImage;
 import org.jclouds.dimensiondata.cloudcontroller.compute.functions.ServerWithNatRuleToNodeMetadata;
 import org.jclouds.dimensiondata.cloudcontroller.compute.options.DimensionDataCloudControllerTemplateOptions;
-import org.jclouds.dimensiondata.cloudcontroller.compute.DimensionDataCloudControllerComputeServiceAdapter;
 import org.jclouds.dimensiondata.cloudcontroller.compute.strategy.GetOrCreateNetworkDomainThenCreateNodes;
 import org.jclouds.dimensiondata.cloudcontroller.compute.strategy.UseNodeCredentialsButOverrideFromTemplate;
+import org.jclouds.dimensiondata.cloudcontroller.compute.suppliers.OrganisationIdForAccount;
 import org.jclouds.dimensiondata.cloudcontroller.domain.Datacenter;
 import org.jclouds.dimensiondata.cloudcontroller.domain.OsImage;
 import org.jclouds.dimensiondata.cloudcontroller.domain.internal.ServerWithExternalIp;
 import org.jclouds.domain.Location;
+import org.jclouds.rest.AuthorizationException;
+import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
+import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
 public class DimensionDataCloudControllerComputeServiceContextModule extends
@@ -67,6 +82,14 @@ public class DimensionDataCloudControllerComputeServiceContextModule extends
         // to have the compute service adapter override default locations
         install(new LocationsFromComputeServiceAdapterModule<ServerWithExternalIp, OsImage, OsImage, Datacenter>() {
         });
+    }
 
+    @Provides
+    @Singleton
+    @Memoized
+    public final Supplier<String> getOrganisationIdForAccount(
+            AtomicReference<AuthorizationException> authException, @Named(PROPERTY_SESSION_INTERVAL) long seconds, DimensionDataCloudControllerApi api) {
+        return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException,
+                new OrganisationIdForAccount(api), seconds, TimeUnit.SECONDS);
     }
 }
