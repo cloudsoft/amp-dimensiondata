@@ -75,7 +75,7 @@ public class CleanupServer implements Function<String, Boolean> {
 
       for (final NatRule natRule : natRulesToBeDeleted) {
          Response deleteNatRuleResponse = api.getNetworkApi().deleteNatRule(natRule.id());
-         manageResponse(deleteNatRuleResponse, format("Cannot delete NAT rule for internalIp (%s) - externalIp %s created for server (%s). Rolling back ...", natRule.id(), natRule.internalIp(), natRule.externalIp(), serverId));
+         manageResponse(deleteNatRuleResponse, format("Cannot delete NAT rule for internalIp (%s) - externalIp %s created for server (%s). Rolling back ...", natRule.id(), natRule.internalIp(), natRule.externalIp()));
 
          Optional<PublicIpBlock> optionalPublicIpBlock = api.getNetworkApi().listPublicIPv4AddressBlocks(networkDomainId).concat().firstMatch(new Predicate<PublicIpBlock>() {
             @Override
