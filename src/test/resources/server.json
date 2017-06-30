@@ -1,52 +1,60 @@
 {
-  "name": "node-9a6",
-  "operatingSystem": {
-    "id": "UBUNTU1464",
-    "displayName": "UBUNTU14/64",
-    "family": "UNIX"
-  },
+  "name": "test-ef2",
   "cpu": {
     "count": 2,
     "speed": "STANDARD",
     "coresPerSocket": 1
   },
-  "memoryGb": 4,
+  "memoryGb": 1,
   "disk": [
     {
-      "id": "4a22f947-9ddc-48de-aabe-54f95d331cdc",
+      "id": "4b7704a8-425d-49f4-87fc-3de7db4f4821",
       "scsiId": 0,
       "sizeGb": 10,
       "speed": "STANDARD",
-      "state": "NORMAL"
+      "state": "PENDING_ADD"
     }
   ],
   "networkInfo": {
     "primaryNic": {
-      "id": "980a9fdd-4ea2-478b-85b4-f016349f1738",
-      "privateIpv4": "10.0.0.8",
-      "ipv6": "2607:f480:111:1575:c47:7479:2af8:3f1a",
-      "vlanId": "6b25b02e-d3a2-4e69-8ca7-9bab605deebd",
-      "vlanName": "vlan1",
-      "state": "NORMAL"
+      "id": "032edbe3-94a7-48a0-99da-8514e3008bbf",
+      "privateIpv4": "10.0.0.6",
+      "ipv6": "2a00:47c0:511:1357:5014:a7cb:c90:8dcc",
+      "vlanId": "2928c6f2-574b-4b25-ac8e-3fea7d9f344c",
+      "vlanName": "JCLOUDS_VLAN",
+      "networkAdapter": "E1000",
+      "key": 4000,
+      "state": "PENDING_ADD"
     },
     "additionalNic": [],
-    "networkDomainId": "690de302-bb80-49c6-b401-8c02bbefb945"
+    "networkDomainId": "e0f3ccc8-9214-4fe2-8063-4f5ad559afdb"
   },
   "softwareLabel": [],
-  "sourceImageId": "4c02126c-32fc-4b4c-9466-9824c1b5aa0f",
-  "createTime": "2016-03-16T11:48:39.000Z",
-  "deployed": true,
+  "sourceImageId": "99cc6f2f-6e4f-4e67-b5fc-b702b613efb0",
+  "createTime": "2017-06-28T21:21:07.000Z",
+  "deployed": false,
   "started": true,
-  "state": "NORMAL",
-  "vmwareTools": {
-    "versionStatus": "NEED_UPGRADE",
-    "runningStatus": "RUNNING",
-    "apiVersion": 9354
+  "state": "PENDING_ADD",
+  "guest": {
+    "operatingSystem": {
+      "id": "CENTOS764",
+      "displayName": "CENTOS7/64",
+      "family": "UNIX"
+    },
+    "osCustomization": true
   },
-  "virtualHardware": {
-    "version": "vmx-08",
-    "upToDate": false
+  "tag": [],
+  "progress": {
+    "action": "DEPLOY_SERVER",
+    "requestTime": "2017-06-28T21:21:07.000Z",
+    "userName": "cloudsoft",
+    "numberOfSteps": 13,
+    "updateTime": "2017-06-28T21:21:07.000Z",
+    "step": {
+      "name": "PREPARE_CLONE_VM_TASK",
+      "number": 2
+    }
   },
-  "id": "5ba45018-7ced-4a04-9085-93daab230968",
-  "datacenterId": "NA9"
+  "id": "3d04484a-a77b-4b76-9bff-5a1494fb071c",
+  "datacenterId": "EU7"
 }

@@ -25,27 +25,22 @@
     <parent>
         <groupId>org.apache.jclouds.labs</groupId>
         <artifactId>jclouds-labs</artifactId>
-        <version>1.9.2</version>
+        <version>2.0.1</version>
     </parent>
 
     <groupId>io.cloudsoft.jclouds.labs</groupId>
-    <artifactId>dimensiondata-cloudcontroller</artifactId>
-    <version>1.9.3-SNAPSHOT</version>
-    <description>jclouds components to access an implementation of DimensioData CloudControl</description>
+    <artifactId>dimensiondata-cloudcontrol</artifactId>
+    <name>jclouds Dimension Data CloudControl API</name>
+    <description>jclouds components to access an implementation of DimensionData CloudControl</description>
     <packaging>bundle</packaging>
 
     <properties>
-        <test.dimensiondata-cloudcontroller.api-version>2.1</test.dimensiondata-cloudcontroller.api-version>
-        <test.dimensiondata-cloudcontroller.endpoint>FIXME</test.dimensiondata-cloudcontroller.endpoint>
-        <test.dimensiondata-cloudcontroller.identity>FIXME</test.dimensiondata-cloudcontroller.identity>
-        <test.dimensiondata-cloudcontroller.credential>FIXME</test.dimensiondata-cloudcontroller.credential>
-        <jclouds.osgi.export>org.jclouds.dimensiondata*;version="${project.version}"</jclouds.osgi.export>
-        <jclouds.osgi.import>
-            org.jclouds.compute.internal;version="${project.version}",
-            org.jclouds.rest.internal;version="${project.version}",
-            org.jclouds*;version="${project.version}",
-            *
-        </jclouds.osgi.import>
+        <test.dimensiondata-cloudcontrol.api-version>2.4</test.dimensiondata-cloudcontrol.api-version>
+        <test.dimensiondata-cloudcontrol.endpoint>FIXME</test.dimensiondata-cloudcontrol.endpoint>
+        <test.dimensiondata-cloudcontrol.identity>FIXME</test.dimensiondata-cloudcontrol.identity>
+        <test.dimensiondata-cloudcontrol.credential>FIXME</test.dimensiondata-cloudcontrol.credential>
+        <jclouds.osgi.export>org.jclouds.dimensiondata.cloudcontrol*;version="${project.version}"</jclouds.osgi.export>
+        <jclouds.osgi.import>org.jclouds*;version="${project.version}",*</jclouds.osgi.import>
     </properties>
 
     <dependencies>
@@ -221,18 +216,18 @@
                                 <configuration>
                                     <threadCount>1</threadCount>
                                     <systemPropertyVariables>
-                                        <test.dimensiondata-cloudcontroller.api-version>
-                                            ${test.dimensiondata-cloudcontroller.api-version}
-                                        </test.dimensiondata-cloudcontroller.api-version>
-                                        <test.dimensiondata-cloudcontroller.endpoint>
-                                            ${test.dimensiondata-cloudcontroller.endpoint}
-                                        </test.dimensiondata-cloudcontroller.endpoint>
-                                        <test.dimensiondata-cloudcontroller.identity>
-                                            ${test.dimensiondata-cloudcontroller.identity}
-                                        </test.dimensiondata-cloudcontroller.identity>
-                                        <test.dimensiondata-cloudcontroller.credential>
-                                            ${test.dimensiondata-cloudcontroller.credential}
-                                        </test.dimensiondata-cloudcontroller.credential>
+                                        <test.dimensiondata-cloudcontrol.api-version>
+                                            ${test.dimensiondata-cloudcontrol.api-version}
+                                        </test.dimensiondata-cloudcontrol.api-version>
+                                        <test.dimensiondata-cloudcontrol.endpoint>
+                                            ${test.dimensiondata-cloudcontrol.endpoint}
+                                        </test.dimensiondata-cloudcontrol.endpoint>
+                                        <test.dimensiondata-cloudcontrol.identity>
+                                            ${test.dimensiondata-cloudcontrol.identity}
+                                        </test.dimensiondata-cloudcontrol.identity>
+                                        <test.dimensiondata-cloudcontrol.credential>
+                                            ${test.dimensiondata-cloudcontrol.credential}
+                                        </test.dimensiondata-cloudcontrol.credential>
                                     </systemPropertyVariables>
                                 </configuration>
                             </execution>
